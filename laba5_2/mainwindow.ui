@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>791</width>
+      <height>551</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menumenu">
+    <property name="title">
+     <string>menu</string>
+    </property>
+    <addaction name="actionadd"/>
+    <addaction name="actionadd_Rectangle"/>
+    <addaction name="actioncut_off"/>
+    <addaction name="actionadd_polygon"/>
+    <addaction name="actionpolygon_cut_off"/>
+    <addaction name="actionadd_cutting_polynom"/>
+   </widget>
+   <addaction name="menumenu"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionadd">
+   <property name="text">
+    <string>add</string>
+   </property>
+  </action>
+  <action name="actionadd_Rectangle">
+   <property name="text">
+    <string>add Rectangle</string>
+   </property>
+  </action>
+  <action name="actioncut_off">
+   <property name="text">
+    <string>cut off</string>
+   </property>
+  </action>
+  <action name="actionadd_polygon">
+   <property name="text">
+    <string>add polygon </string>
+   </property>
+  </action>
+  <action name="actionpolygon_cut_off">
+   <property name="text">
+    <string>polygon cut off</string>
+   </property>
+  </action>
+  <action name="actionadd_cutting_polynom">
+   <property name="text">
+    <string>add cutting polynom</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
