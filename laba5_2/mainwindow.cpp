@@ -222,81 +222,6 @@ void MainWindow::on_actioncut_off_triggered()
     repaint();
 }
 
-int MainWindow::getCode(QPoint point)
-{
-    double x = point.x();
-    double y = point.y();
-    int code = 0;
-    if(x < Xmin)
-        code += 1;
-    if(x>Xmax)
-        code +=2;
-    if(y<Ymin)
-        code +=4;
-    if(y>Ymax)
-        code +=8;
-    return code;
-}
-
-QPoint MainWindow::intersectionPoint(QPoint P1, QPoint P2, int border){
-
-    int P1_code = getCode(P1);
-    QPoint intersectionPoint;
-    if ((border ==  8) || ( border == -1 && (P1_code & 8)))
-        intersectionPoint = QPoint(P1.x() + (P2.x()- P1.x()) * (Ymax - P1.y()) / (P2.y() - P1.y()),Ymax);
-    else if ((border ==  4) || ( border == -1 && (P1_code & 4)))
-        intersectionPoint = QPoint(P1.x() + (P2.x()- P1.x()) * (Ymin - P1.y()) / (P2.y() - P1.y()),Ymin);
-    else if ((border ==  2) || ( border == -1 && (P1_code & 2)))
-        intersectionPoint = QPoint(Xmax,P1.y() + (P2.y()- P1.y()) * (Xmax - P1.x()) / (P2.x() - P1.x()));
-    else if ((border ==  1) || ( border == -1 && (P1_code & 1)))
-        intersectionPoint = QPoint(Xmin,P1.y() + (P2.y()- P1.y()) * (Xmin - P1.x()) / (P2.x() - P1.x()));
-    return intersectionPoint;
-}
-
-void MainWindow::cutPolygon(){
-    QVector<QPoint> cuttedPolygon = poly;
-    int borders[4]  = {1,2,4,8};
-
-    for(int i = 0; i<4;i++)
-    {
-        qDebug() << i << " : " << cuttedPolygon.size();
-        QVector<QPoint> inputList = cuttedPolygon;
-        inputList.push_back(inputList[0]);
-        cuttedPolygon.clear();
-        for(int j = 1;j < inputList.size();j++)
-        {
-
-            QPoint currentPoint = inputList[j];
-            QPoint prevPoint = inputList[j-1];
-
-            int PrevP_code = getCode(prevPoint), curP_code = getCode(currentPoint);
-            if(!(curP_code & borders[i]))
-            {
-                if(PrevP_code & borders[i]){
-                    qDebug() << 1111;
-                    cuttedPolygon.push_back(intersectionPoint(prevPoint,currentPoint,borders[i]));
-                }
-                qDebug() << 2222;
-                cuttedPolygon.push_back(currentPoint);
-            }
-            else if(!(PrevP_code & borders[i])){
-                qDebug() << 3333;
-                cuttedPolygon.push_back(intersectionPoint(currentPoint,prevPoint,borders[i]));
-            }
-        }
-
-    }
-    qDebug() << cuttedPolygon.size();
-    cuttedPolygon.push_back(cuttedPolygon[0]);
-//    cuttedPoly.clear();
-    for(auto to : cuttedPolygon){
-        cuttedPoly.push_back(to);
-    }
-    qDebug() << "HHHHHHHHHHHH";
-//    cuttedPoly = cuttedPolygon;
-}
-
-
 
 void MainWindow::on_actionadd_polygon_triggered()
 {
@@ -333,9 +258,9 @@ void MainWindow::on_actionadd_polygon_triggered()
 void MainWindow::on_actionpolygon_cut_off_triggered()
 {
     cuttedPoly.clear();
-    QVector < QPoint > fir = poly;
+    QVector < QPointF > fir = poly;
     fir.pop_back();
-    QVector < QPoint > sec = otsecPoly;
+    QVector < QPointF > sec = otsecPoly;
     sec.pop_back();
     suthHodgClip(fir, sec);
 }
@@ -346,27 +271,27 @@ void MainWindow::on_actionpolygon_cut_off_triggered()
 
 // Returns x-value of point of intersection of two
 // lines
-int MainWindow::x_intersect(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
+double MainWindow::x_intersect(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4)
 {
-    int num = (x1*y2 - y1*x2) * (x3-x4) -
+    double num = (x1*y2 - y1*x2) * (x3-x4) -
             (x1-x2) * (x3*y4 - y3*x4);
-    int den = (x1-x2) * (y3-y4) - (y1-y2) * (x3-x4);
+    double den = (x1-x2) * (y3-y4) - (y1-y2) * (x3-x4);
     return num/den;
 }
 
-int MainWindow::y_intersect(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4)
+double MainWindow::y_intersect(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4)
 {
-    int num = (x1*y2 - y1*x2) * (y3-y4) -
+    double num = (x1*y2 - y1*x2) * (y3-y4) -
             (y1-y2) * (x3*y4 - y3*x4);
-    int den = (x1-x2) * (y3-y4) - (y1-y2) * (x3-x4);
+    double den = (x1-x2) * (y3-y4) - (y1-y2) * (x3-x4);
     return num/den;
 }
 
 // This functions clips all the edges w.r.t one clip
 // edge of clipping area
-void MainWindow::clip(QVector < QPoint >& poly_points, int x1, int y1, int x2, int y2)
+void MainWindow::clip(QVector < QPointF >& poly_points, double x1, double y1, double x2, double y2)
 {
-    QVector < QPoint > new_points(20);
+    QVector < QPointF > new_points(20);
     int new_poly_size = 0;
     int poly_size = poly_points.size();
     // (ix,iy),(kx,ky) are the co-ordinate values of
@@ -375,16 +300,16 @@ void MainWindow::clip(QVector < QPoint >& poly_points, int x1, int y1, int x2, i
     {
         // i and k form a line in polygon
         int k = (i+1) % poly_points.size();
-        int ix = poly_points[i].x(), iy = poly_points[i].y();
-        int kx = poly_points[k].x(), ky = poly_points[k].y();
+        double ix = poly_points[i].x(), iy = poly_points[i].y();
+        double kx = poly_points[k].x(), ky = poly_points[k].y();
 
         // Calculating position of first point
         // w.r.t. clipper line
-        int i_pos = (x2-x1) * (iy-y1) - (y2-y1) * (ix-x1);
+        double i_pos = (x2-x1) * (iy-y1) - (y2-y1) * (ix-x1);
 
         // Calculating position of second point
         // w.r.t. clipper line
-        int k_pos = (x2-x1) * (ky-y1) - (y2-y1) * (kx-x1);
+        double k_pos = (x2-x1) * (ky-y1) - (y2-y1) * (kx-x1);
 
         // Case 1 : When both points are inside
         if (i_pos < 0 && k_pos < 0)
@@ -443,7 +368,7 @@ void MainWindow::clip(QVector < QPoint >& poly_points, int x1, int y1, int x2, i
 }
 
 // Implements Sutherland–Hodgman algorithm
-void MainWindow::suthHodgClip(QVector < QPoint > &poly_points, QVector < QPoint >& clipper_points)
+void MainWindow::suthHodgClip(QVector < QPointF > &poly_points, QVector < QPointF >& clipper_points)
 {
      int poly_size = poly_points.size();
      int clipper_size = clipper_points.size();
@@ -499,5 +424,13 @@ void MainWindow::on_actionadd_cutting_polynom_triggered()
     }
     otsecPoly.push_back(otsecPoly[0]);
     repaint();
+}
+
+
+void MainWindow::on_actionclear_polygons_triggered()
+{
+    poly.clear();
+    otsecPoly.clear();
+    cuttedPoly.clear();
 }
 

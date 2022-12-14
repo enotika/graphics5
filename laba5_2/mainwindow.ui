@@ -45,8 +45,9 @@
     <addaction name="actionadd_Rectangle"/>
     <addaction name="actioncut_off"/>
     <addaction name="actionadd_polygon"/>
-    <addaction name="actionpolygon_cut_off"/>
     <addaction name="actionadd_cutting_polynom"/>
+    <addaction name="actionpolygon_cut_off"/>
+    <addaction name="actionclear_polygons"/>
    </widget>
    <addaction name="menumenu"/>
   </widget>
@@ -79,6 +80,11 @@
   <action name="actionadd_cutting_polynom">
    <property name="text">
     <string>add cutting polynom</string>
+   </property>
+  </action>
+  <action name="actionclear_polygons">
+   <property name="text">
+    <string>clear polygons</string>
    </property>
   </action>
  </widget>
